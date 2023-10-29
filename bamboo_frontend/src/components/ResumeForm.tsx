@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
+import axios from 'axios';
 
 interface WorkExperience {
   company: string;
@@ -69,12 +70,36 @@ const ResumeForm: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     // You can use the formData object to generate a resume or send the data to an API.
     // For this example, we will just log the data.
+    // jk now im making the api call
     console.log(formData);
+
+
+  const API_ENDPOINT: string = "https://bamboo-backend-de7234813d8d.herokuapp.com/generate_resume";
+
+  try {
+    // You can use the formData object to generate a resume or send the data to an API.
+    // For this example, we will just log the data.
+    console.log(formData);
+
+    // Make an API call to send the data to your server
+
+    // ! TEMP STRING. CHANGE TO FORMDATA LATER
+    const response = await axios.get(API_ENDPOINT, {params: {"input": "hello andreas"}});
+
+    // Handle the API response as needed
+    console.log('API Response:', response.data);
+
+    // You can also redirect the user or perform other actions based on the response.
+
+  } catch (error) {
+    console.error('API Error:', error);
+    // Handle the error (e.g., show an error message to the user).
+  }
   };
 
   return (
