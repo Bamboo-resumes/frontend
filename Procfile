@@ -1,1 +1,1 @@
-web: cd bamboo_frontend && npm install && npm install --save-dev @types/node && npm run dev -p $PORT
+web: cd bamboo_frontend && npm install && npm install --save-dev @types/node && npm run dev -p $PORT --bind :$PORT
