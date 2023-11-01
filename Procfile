@@ -1,1 +1,1 @@
-web: npm run dev
+web: cd bamboo_frontend && npm run dev
