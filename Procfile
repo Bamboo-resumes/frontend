@@ -1,3 +1,1 @@
-web: cd bamboo_frontend
-npm install
-npm run dev
+web: cd bamboo_frontend && npm install && npm run dev
