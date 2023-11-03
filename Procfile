@@ -1,2 +1,2 @@
-web: cd bamboo_frontend && npm install && npm install --save-dev @types/node && npm run dev -p $PORT -b 0.0.0.0
+web: cd bamboo_frontend && npm install && npm install --save-dev @types/node && npm run dev -p $PORT
 echo "all PF commands run"
