@@ -4,6 +4,7 @@
     "react-router-dom": "^6.17.0"
   },
   "devDependencies": {
-    "@types/node": "^20.8.10"
+    "@types/node": "^20.8.10",
+    "serve": "^14.2.1"
   }
 }
