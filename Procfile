@@ -1,5 +1,1 @@
-cd bamboo_frontend \
-npm install \
-npm install --save-dev @types/node \
-web: npm run dev -p $PORT \
-echo "all PF commands run" \
+web: cd bamboo_frontend && npm install && npm run build && npm start
