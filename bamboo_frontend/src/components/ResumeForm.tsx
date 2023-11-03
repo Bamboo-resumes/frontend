@@ -24,16 +24,16 @@ interface FormData {
 
 const ResumeForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    firstName: 'Spencer',
-    lastName: 'Huang',
-    degree: 'B.S. Computer Science, Applied Math & Statistics',
-    email: 'shuan126@jhu.edu',
-    summary: 'looking for summer 2024 internship in software engineering',
-    university: 'Johns Hopkins University',
-    universityStartDate: 'Aug. 2022',
-    universityEndDate: 'May 2026',
+    firstName: '',
+    lastName: '',
+    degree: '',
+    email: '',
+    summary: '',
+    university: '',
+    universityStartDate: '',
+    universityEndDate: '',
     workExperience: [],
-    skills: 'Javascript, Minecraft Command Block',
+    skills:'',
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
