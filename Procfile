@@ -1,1 +1,1 @@
-web: cd bamboo_frontend && npm install && npm run build && npm start -p $PORT
+web: cd bamboo_frontend && npm install && npm run build && npm start
