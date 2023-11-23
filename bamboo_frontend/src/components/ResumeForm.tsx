@@ -35,6 +35,13 @@ const ResumeForm: React.FC = () => {
     workExperience: [],
     skills:'',
   });
+  const [resume, setResume] = useState(null);
+  const [url , setURL] = useState('');
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Now, TypeScript recognizes e as a ChangeEvent related to a file input
+    setResume(e.target.files[0]);
+  };
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
@@ -102,15 +109,28 @@ const ResumeForm: React.FC = () => {
   }
   };
 
+ const textColor = {
+    color: "white",
+    fontSize: "2em"
+  };
+ 
+  const formStyle = {
+    backgroundColor: 'black',
+    padding: '20px', // Add any additional styling as needed
+    // ... other styles
+  };
+
   return (
-    <form className="mt-16 border-4 rounded-md bg-light-green" onSubmit={handleSubmit}>
+    <form className="mt-16 border-4 rounded-md" style={formStyle} onSubmit={handleSubmit}>
       <div className="space-y-12">
         
 
-        <div className="border-b border-gray-900/10 pb-5">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Personal Information</h2>
+        <div style={{backgroundColor:"dark-green", padding:"20px",  borderRadius: "5%" }} className="border-b border-gray-900/10 pb-5">
+          <h1 style={textColor} className="text-base font-semibold leading-7">Bamboo Resumes</h1>
+          <p style={{color: "gray", fontSize: "s"}} className="text-base font-semibold leading-7">Generate a Resume now to tailor to any job description</p>
+          {/* <h3 style={textColor} className="text-base font-semibold leading-7">Drop your resume below</h3> */}
 
-          <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
+          {/* <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
             <div className="sm:col-span-3">
               <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
                 First name
@@ -161,9 +181,9 @@ const ResumeForm: React.FC = () => {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
-
+{/* 
         <div className="mt-2 border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Education</h2>
           <div className="mt-3">
@@ -230,9 +250,9 @@ const ResumeForm: React.FC = () => {
 
 
           </div>
-        </div>
+        </div> */}
 
-        <div className="border-b border-gray-900/10 pb-5">
+        {/* <div className="border-b border-gray-900/10 pb-5">
         <h2 className="text-base font-semibold leading-7 text-gray-900">Work Experience</h2>
         <div className="flex flex-col mt-1">
           {formData.workExperience.map((experience, index) => (
@@ -282,8 +302,8 @@ const ResumeForm: React.FC = () => {
           ))}
           <button type="button" onClick={handleAddWorkExperience}>Add Work Experience</button>
         </div>
-      </div>
-
+      </div> */}
+{/* 
         <div className="border-b border-gray-900/10 pb-12">
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="col-span-full">
@@ -302,9 +322,10 @@ const ResumeForm: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <div className="border-b border-gray-900/10 pb-12">
+        {/*
+         <div className="border-b border-gray-900/10 pb-12">
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="col-span-full">
               <label htmlFor="about" className="block text-sm font-medium leading-6 text-gray-900">
@@ -322,12 +343,39 @@ const ResumeForm: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
+    <div className="sm:col-span-4">
+    <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block', marginBottom:"5%" }}>
+              <label htmlFor="fileInput" style={{ padding: '10px 15px', backgroundColor: '#4CAF50', color: 'white', cursor: 'pointer' }}>
+                Upload Resume
+              </label>
+              <input type="file" id="fileInput" name="fileInput"  onChange={handleFileUpload} style={{ fontSize: '100px', position: 'absolute', left: 0, top: 0, opacity: 0 }} />
+              <span style={{ display: 'inline-block', padding: '10px', marginLeft: '10px', backgroundColor: '#f0f0f0' }}>
+              {resume ? resume.name : 'No file chosen'}
+              </span>
+            </div>
+              <label style={{
+                color: "white"
+              }} className="block text-sm font-medium leading-6">
+                Job Link
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={url}
+                  onChange={e => setURL(e.target.value)}
+                />
+              </div>
+            </div>
+
+            
+       
         <div className="text-center">
           <button
             type="submit"
-            className="px-4 py-2 bg-gray-900 rounded-md text-white font-medium hover:bg-gray-700"
+            style={{ padding: '10px 15px', backgroundColor: '#4CAF50', color: 'white', cursor: 'pointer' }}
           >
             Generate Resume
           </button>

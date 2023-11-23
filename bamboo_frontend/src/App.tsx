@@ -12,8 +12,13 @@ function App() {
   // const [count, setCount] = useState(0)
 
   return (
-    <div className = "bg-dark-gray">
-      <NavBar/>
+    <div style={{  
+      backgroundImage: `url('${"background.png"}')`,
+      backgroundPosition: 'center',
+      backgroundSize: 'cover',
+     
+    }}>
+      {/* <NavBar/> */}
       <MainRouter/>
     </div>
   )
