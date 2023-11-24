@@ -1,1 +1,1 @@
-web: cd bamboo_frontend && npm install && npm run build && npm start
+web: cd bamboo_frontend && npm install && npm run build && npm run start
