@@ -4,6 +4,7 @@
 import NavBar from './components/NavBar'
 import MainRouter from './router/MainRouter'
 import './App.css'
+import { Worker } from '@react-pdf-viewer/core';
 
 
 
@@ -18,8 +19,14 @@ function App() {
       backgroundSize: 'cover',
      
     }}>
-      {/* <NavBar/> */}
-      <MainRouter/>
+       <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`}>
+       <MainRouter/>
+       </Worker>
+
+
+
+
+      
     </div>
   )
 }

@@ -1,387 +1,490 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect, useRef } from 'react';
 import axios from 'axios';
+import ResumeView from './ResumeView';
+import { useLoading } from '../context/LoadingContext';
+import {Link} from "react-router-dom";
+import BambooLogo from '/bamboologo.jpg';
+import BambooSolo from '/bamboo_solo.jpg';
+import TaskList from './Tasks/TaskList';
+import ComponentLoader from "../common/Loader/ComponentLoader";
+import PdfViewer from './PdfViewer'; 
 
-interface WorkExperience {
-  company: string;
-  jobTitle: string;
-  startDate: string;
-  endDate: string;
-  description: string;
+export interface WorkExperience {
+  job_title: string;
+  company_name: string;
+  responsibilities: string;
+}
+
+export interface EducationInterface {
+  school_name: string;
+  degree: string;
+  field_of_study: string;
 }
 
 interface FormData {
-  firstName: string;
-  lastName: string;
-  degree: string;
+  name: string;
   email: string;
-  summary: string;
-  university: string;
-  universityStartDate: string;
-  universityEndDate: string;
-  workExperience: WorkExperience[];
-  skills: string;
+  phone: string;
+  skills: string[];
+  education: EducationInterface[];
+  experience: WorkExperience[];
+  url: string;
+  job_description: string;
 }
 
-const ResumeForm: React.FC = () => {
+interface ResumeFormProps {
+  setResume: React.Dispatch<React.SetStateAction<any>>;
+}
+
+const ResumeForm: React.FC = (props: ResumeFormProps) => {
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
-    degree: '',
+    name: '',
     email: '',
-    summary: '',
-    university: '',
-    universityStartDate: '',
-    universityEndDate: '',
-    workExperience: [],
-    skills:'',
+    phone: '',
+    skills: [] as string[],
+    education: [],
+    experience: [],
+    url: '',
+    job_description: ''
   });
-  const [resume, setResume] = useState(null);
-  const [url , setURL] = useState('');
+  const setResume = props.setResume;
+ // const { loading, setLoadingState } = useLoading();
+  const [loading ,setLoading] = useState<boolean>(false);
+  const [currentSkillsInput, setCurrentSkillsInput] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isExperience, setIsExperience] = React.useState<boolean>(false);
+  const [tmpResume, setTmpResume] = useState<any>(null);
+  const [fileContents, setFileContents] = useState(null);
+useEffect(() => {
+  console.log(tmpResume);
+},[tmpResume])
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Now, TypeScript recognizes e as a ChangeEvent related to a file input
     setResume(e.target.files[0]);
   };
 
+  const handleInputChange = (e) => {
+    setCurrentSkillsInput(e.target.value);
+  };
+
+  // const handleInputKeyDown = (e) => {
+  //   e.preventDefault();
+  //   setFormData((prevFormData) => {
+  //     // Check if the property exists in the formData
+  //       // If it's not an array, assume it's a single value, and create an array with both values
+  //       return {
+  //         ...prevFormData,
+  //         [name]: [prevFormData[name], value],
+  //       };
+      
+
+
+  //   });
+  // };
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    e.preventDefault();
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
+    console.log(name, value);
+    
+    setFormData((prevFormData) => {
+      // Check if the property exists in the formData
+        // If it's an array, append the new value
+        // if (Array.isArray(prevFormData[name])) {
+        //   return {
+        //     ...prevFormData,
+        //     [name]: [...prevFormData[name], value],
+        //   };
+        // }
+        // If it's not an array, assume it's a single value, and create an array with both values
+        if (Array.isArray(prevFormData[name]) && currentSkillsInput !== "") {
+          setCurrentSkillsInput("");
+          return {
+            ...prevFormData,
+            [name]: [...prevFormData[name], value],
+          
+          };
+
+          
+        } 
+        return {
+          ...prevFormData,
+          [name]: value,
+        };
+      
     });
   };
 
-  const handleWorkExperienceChange = (index: number, field: keyof WorkExperience, value: string): void => {
-    const updatedWorkExperience = [...formData.workExperience];
-    updatedWorkExperience[index][field] = value;
-    setFormData({
-      ...formData,
-      workExperience: updatedWorkExperience,
-    });
+  const handleSectionChange = (sectionData, sectionKey: string) => {
+    console.log(sectionData, sectionKey);
+    if(sectionKey === "experDelete"){
+      setFormData((prevFormData) => {
+        // Assuming you have an array property named with the provided 'sectionKey' in your form data
+        return {
+          ...prevFormData,
+          ['experience']: prevFormData['experience'].filter((_, i) => i !== sectionData),
+        };
+      });
+      return;
+    }
+
+    if(sectionKey === "eduDelete"){
+      setFormData((prevFormData) => {
+        // Assuming you have an array property named with the provided 'sectionKey' in your form data
+        return {
+          ...prevFormData,
+          ['education']: prevFormData['education'].filter((_, i) => i !== sectionData),
+        };
+      });
+      return;
+    }
+    
+      setFormData((prevFormData) => {
+        // Assuming you have an array property named with the provided 'sectionKey' in your form data
+        return {
+          ...prevFormData,
+          [sectionKey]: [...prevFormData[sectionKey], sectionData],
+        };
+      });
   };
   
 
-  const handleAddWorkExperience = (): void => {
-    setFormData({
-      ...formData,
-      workExperience: [...formData.workExperience, { company: '', jobTitle: '', startDate: '', endDate: '', description: '' }],
-    });
-  };
 
-  const handleRemoveWorkExperience = (index: number): void => {
-    const updatedWorkExperience = [...formData.workExperience];
-    updatedWorkExperience.splice(index, 1);
-    setFormData({
-      ...formData,
-      workExperience: updatedWorkExperience,
-    });
-  };
+
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
-    // You can use the formData object to generate a resume or send the data to an API.
-    // For this example, we will just log the data.
-    // jk now im making the api call
-    console.log(formData);
 
-
-  const API_ENDPOINT: string = "https://bamboo-backend-de7234813d8d.herokuapp.com/generate_resume";
+  const API_ENDPOINT: string = "https://bamboo-django-a637ab9dea2b.herokuapp.com/";
 
   try {
     // You can use the formData object to generate a resume or send the data to an API.
     // For this example, we will just log the data.
-    console.log(formData);
+    
 
     // Make an API call to send the data to your server
+    setLoading(true);
+    await axios.post(API_ENDPOINT, formData)
+      .then((response) => {
+     //   console.log(response.data);
+       // const le = response.data;
+      //  teresume.current = le;
+      //  console.log(teresume.current);
+        
+      //  setResume(response.data);
+      //  handlePDF(response.data);
+        handleOpenPdf(response.data);
+       // setTmpResume(response.data);
+      //  setLoadingState(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      }).finally(() => {
+        setLoading(false);
+      })
 
-    // ! TEMP STRING. CHANGE TO FORMDATA LATER
-    const response = await axios.get(API_ENDPOINT, {params: {"input": "hello andreas"}});
-
-    // Handle the API response as needed
-    console.log('API Response:', response.data);
 
     // You can also redirect the user or perform other actions based on the response.
 
   } catch (error) {
     console.error('API Error:', error);
     // Handle the error (e.g., show an error message to the user).
-  }
+    }
   };
 
- const textColor = {
-    color: "white",
-    fontSize: "2em"
-  };
- 
-  const formStyle = {
-    backgroundColor: 'black',
-    padding: '20px', // Add any additional styling as needed
-    // ... other styles
+  const handleOpenPdf = (pdfContent) => {
+    // Create a Blob from the PDF content
+    const pdfBlob = new Blob([pdfContent], { type: 'application/pdf' });
+
+    // Create a URL for the Blob
+    const blobUrl = URL.createObjectURL(pdfBlob);
+
+    // Set the Blob URL in the state
+    setFileContents(blobUrl);
+
+    // Open the PDF in a new tab
+    window.open(blobUrl, '_blank');
   };
 
   return (
-    <form className="mt-16 border-4 rounded-md" style={formStyle} onSubmit={handleSubmit}>
-      <div className="space-y-12">
-        
+    
+  <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark " style={{margin: "10%"}}>
+  { loading ? <ComponentLoader /> :
+  (!tmpResume &&
+    <div className="flex flex-wrap items-center">
+  <div className="hidden w-full xl:block xl:w-1/2"> 
+    <div className="py-17.5 px-26 text-center">
+            <Link  className="mb-5.5 inline-block" style={{display: "flex", justifyContent: "center", alignItems: "center"}} to="/">
+                {/* <img className="hidden dark:block" src={BambooLogo} alt="Logo"/> */}
+                <img className="dark:hidden"   width={"50%"} height={"50%"}  src={BambooLogo} alt="Logo"/>
+            </Link>
+      <p className="2xl:px-20">
+          Tailor your technical resume to any job description in seconds
+      </p>
+    <div className={"flex "} style={{justifyContent:"center"}}>
+        <img className="dark:hidden"   width={"75%"} height={"75%"}  src={BambooSolo} alt="Logo"/>
+    </div>
 
-        <div style={{backgroundColor:"dark-green", padding:"20px",  borderRadius: "5%" }} className="border-b border-gray-900/10 pb-5">
-          <h1 style={textColor} className="text-base font-semibold leading-7">Bamboo Resumes</h1>
-          <p style={{color: "gray", fontSize: "s"}} className="text-base font-semibold leading-7">Generate a Resume now to tailor to any job description</p>
-          {/* <h3 style={textColor} className="text-base font-semibold leading-7">Drop your resume below</h3> */}
-
-          {/* <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-            <div className="sm:col-span-3">
-              <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
-                First name
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="firstName"
-                  id="first-name"
-                  autoComplete="given-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-3">
-              <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
-                Last name
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="lastName"
-                  id="last-name"
-                  autoComplete="family-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-          </div> */}
+    </div>
+   </div>
+  {/* Right side */}
+  <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+    <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
+      <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
+        Tailor your technical resume to any job description in seconds
+      </h2>
+      <div>
+        <div className="mb-4">
+          <label className="mb-2.5 block font-medium text-black dark:text-white">
+            Name
+          </label>
+          <div className="relative">
+            <input
+                type="text"
+                placeholder="Enter your name"
+                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                name="name" 
+                value={formData && formData.name}
+                onChange={handleChange}
+                required={true}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // Handle any custom logic you want when Enter is pressed
+                  }
+                }}
+            />
+          </div>
         </div>
-{/* 
-        <div className="mt-2 border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Education</h2>
-          <div className="mt-3">
-  
-            <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
-              University
-            </label>
-            <div className="mt-2 pb-5">
-              <input
-                type="text"
-                name="university"
-                id="university"
-                autoComplete="given-name"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={formData.university}
+
+        <div className="mb-4">
+          <label className="mb-2.5 block font-medium text-black dark:text-white">
+            Email
+          </label>
+          <div className="relative">
+            <input
+                type="email"
+                placeholder="Enter your email"
+                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                name="email" 
+                value={formData && formData.email}
                 onChange={handleChange}
-              />
-            </div>
-
-            <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
-              Degree + Major
-            </label>
-            <div className="mt-2 pb-5">
-              <input
-                type="text"
-                name="degree"
-                id="degree"
-                autoComplete="given-name"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={formData.degree}
-                onChange={handleChange}
-              />
-            </div>
-
-            <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
-              Starting Month + Year
-            </label>
-            <div className="mt-2 pb-5">
-              <input
-                type="text"
-                name="university-start-month"
-                id="university-start-month"
-                autoComplete="given-name"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={formData.universityStartDate}
-                onChange={handleChange}
-              />
-            </div>
-
-            <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
-              Graduating Month + Year
-            </label>
-            <div className="mt-2">
-              <input
-                type="text"
-                name="university-end-month"
-                id="university-end-month"
-                autoComplete="given-name"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={formData.universityEndDate}
-                onChange={handleChange}
-              />
-            </div>
-
-
+                required={true}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // Handle any custom logic you want when Enter is pressed
+                  }
+                }}
+            />
           </div>
-        </div> */}
-
-        {/* <div className="border-b border-gray-900/10 pb-5">
-        <h2 className="text-base font-semibold leading-7 text-gray-900">Work Experience</h2>
-        <div className="flex flex-col mt-1">
-          {formData.workExperience.map((experience, index) => (
-            <div key={index} className="mt-5 flex flex-col">
-              <input
-                type="text"
-                name="company"
-                placeholder="Company"
-                className="mt-2"
-                value={experience.company}
-                onChange={(e) => handleWorkExperienceChange(index, 'company', e.target.value)}
-              />
-              <input
-                type="text"
-                name="jobTitle"
-                placeholder="Job Title"
-                className="mt-2"
-                value={experience.jobTitle}
-                onChange={(e) => handleWorkExperienceChange(index, 'jobTitle', e.target.value)}
-              />
-              <input
-                type="text"
-                name="startDate"
-                placeholder="Start Date"
-                className="mt-2"
-                value={experience.startDate}
-                onChange={(e) => handleWorkExperienceChange(index, 'startDate', e.target.value)}
-              />
-              <input
-                type="text"
-                name="endDate"
-                placeholder="End Date"
-                className="mt-2"
-                value={experience.endDate}
-                onChange={(e) => handleWorkExperienceChange(index, 'endDate', e.target.value)}
-              />
-              <input
-                type="text"
-                name="description"
-                placeholder="Description"
-                className="mt-2"
-                value={experience.description}
-                onChange={(e) => handleWorkExperienceChange(index, 'description', e.target.value)}
-              />
-              <button type="button" onClick={() => handleRemoveWorkExperience(index)}>Remove</button>
-            </div>
-          ))}
-          <button type="button" onClick={handleAddWorkExperience}>Add Work Experience</button>
         </div>
-      </div> */}
-{/* 
-        <div className="border-b border-gray-900/10 pb-12">
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="col-span-full">
-              <label htmlFor="about" className="block text-sm font-medium leading-6 text-gray-900">
-                Skills (separated by comma)
-              </label>
-              <div className="mt-2">
-                <textarea
-                  id="skills"
-                  name="skills"
-                  rows={3}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={formData.skills}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
+
+        <div className="mb-4">
+          <label className="mb-2.5 block font-medium text-black dark:text-white">
+            Phone
+          </label>
+          <div className="relative">
+            <input
+                type="phone"
+                placeholder="Enter your number"
+                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                name="phone" 
+                value={formData && formData.phone}
+                onChange={handleChange}
+                required={true}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // Handle any custom logic you want when Enter is pressed
+                  }
+                }}
+            />
           </div>
-        </div> */}
+        </div>
 
-        {/*
-         <div className="border-b border-gray-900/10 pb-12">
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="col-span-full">
-              <label htmlFor="about" className="block text-sm font-medium leading-6 text-gray-900">
-                Work Objective
-              </label>
-              <div className="mt-2">
-                <textarea
-                  id="summary"
-                  name="summary"
-                  rows={3}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={formData.summary}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
+        <div className="mb-4 z-1">
+          <label className="mb-2.5 block font-medium text-black dark:text-white">
+            Skills
+          </label>
+                    <div className="relative z-1 bg-white dark:bg-form-input">
+                      <div className='flex'>
+                      <input
+                            type="text"
+                            placeholder="Enter your skills"
+                            className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                            name="skills" 
+                            value={currentSkillsInput}
+                            onChange={handleInputChange}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                // Handle any custom logic you want when Enter is pressed
+                                handleChange(e);
+                              }
+                            }}
+                        />
+                      
+                      </div>
+                       
+                    
+                  {formData.skills && formData.skills.map((skill, index) => (
+                      <div className="flex items-center gap-2.5 mt-2.5" key={index}>
+                        <p className="text-sm text-black dark:text-white">{skill}</p>
+                        <button
+                            className="text-primary text-sm font-medium"
+                            onClick={() => {
+                              setFormData((prevFormData) => {
+                                return {
+                                  ...prevFormData,
+                                  skills: prevFormData.skills.filter((_, i) => i !== index),
+                                };
+                              });
+                            }}
+                        >
+                          Remove
+                        </button>
+                        </div>
+                        ))}
+                </div>
+                
+        </div>
+        <div className="mb-4">
+          <label className="mb-2.5 block font-medium text-black dark:text-white">
+            Education/Experience
+          </label>
+          <div className="relative ">
+            <TaskList isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} education={formData && formData.education} experience={formData && formData.experience} onTaskChange={handleSectionChange}  isExperience={isExperience} setIsExperience={setIsExperience}/>
           </div>
-        </div> */}
+        </div>
+        { formData.education && formData.education.map((task: any) => {
 
-    <div className="sm:col-span-4">
-    <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block', marginBottom:"5%" }}>
-              <label htmlFor="fileInput" style={{ padding: '10px 15px', backgroundColor: '#4CAF50', color: 'white', cursor: 'pointer' }}>
-                Upload Resume
-              </label>
-              <input type="file" id="fileInput" name="fileInput"  onChange={handleFileUpload} style={{ fontSize: '100px', position: 'absolute', left: 0, top: 0, opacity: 0 }} />
-              <span style={{ display: 'inline-block', padding: '10px', marginLeft: '10px', backgroundColor: '#f0f0f0' }}>
-              {resume ? resume.name : 'No file chosen'}
-              </span>
-            </div>
-              <label style={{
-                color: "white"
-              }} className="block text-sm font-medium leading-6">
-                Job Link
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={url}
-                  onChange={e => setURL(e.target.value)}
-                />
+          return (
+            <div
+              draggable="true"
+              className="task relative flex cursor-move justify-between rounded-sm border border-stroke bg-white p-7 shadow-default dark:border-strokedark dark:bg-boxdark"
+              style={{display: isModalOpen ? 'none': 'block', marginBottom: '0.5rem'}}
+            >
+              <div className="relative flex items-center justify-between">
+                {task.job_title ? <p>{task.job_title}</p> : <p>{task.school_name}</p>}
+                {/* <button
+                  className="text-primary text-sm font-medium"
+                  onClick={() => {
+                    if(isExperience){
+                      onTaskChange(task, "experDelete");
+                    } else {
+                      onTaskChange(task, "eduDelete");
+                    }
+                  }}
+                >
+                  Remove
+                </button> */}
               </div>
-            </div>
+                
+              </div>
+          );
+          })}
 
-            
-       
-        <div className="text-center">
-          <button
-            type="submit"
-            style={{ padding: '10px 15px', backgroundColor: '#4CAF50', color: 'white', cursor: 'pointer' }}
-          >
-            Generate Resume
-          </button>
+          { formData.experience && formData.experience.map((task: any) => {
+            return (
+              <div
+                draggable="true"
+                className="task relative flex cursor-move justify-between rounded-sm border border-stroke bg-white p-7 shadow-default dark:border-strokedark dark:bg-boxdark"
+                style={{display: isModalOpen ? 'none': 'block', marginBottom: '0.5rem'}}
+              >
+                <div className="relative flex items-center justify-between">
+                {task.job_title ? <p>{task.job_title}</p> : <p>{task.school_name}</p>}
+                  {/* <button
+                    className="text-primary text-sm font-medium"
+                    onClick={() => {
+                      if(isExperience){
+                        onTaskChange(task, "experDelete");
+                      } else {
+                        onTaskChange(task, "eduDelete");
+                      }
+                    }}
+                  >
+                    Remove
+                  </button> */}
+                </div>
+                  
+                </div>
+            );
+            })}
+        <div className="mb-4">
+          <label className="mb-2.5 block font-medium text-black dark:text-white">
+            URL
+          </label>
+          <div className="relative">
+            <input
+                type="text"
+                placeholder="Enter the job url"
+                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                name="url" 
+                value={formData && formData.url}
+                onChange={handleChange}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // Handle any custom logic you want when Enter is pressed
+                  }
+                }}
+                style={{display: isModalOpen ? "none" : "block"}}
+            />
+          </div>
+        </div>
+        <div className="mb-4 z-1">
+          <label className="mb-2.5 block font-medium text-black dark:text-white">
+            Job Description
+          </label>
+          <div className="relative">
+            <input
+                type="text"
+                placeholder="Enter your email"
+                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                name="job_description" 
+                value={formData && formData.job_description}
+                onChange={handleChange}
+                required={true}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // Handle any custom logic you want when Enter is pressed
+                  }
+                }}
+                disabled={isModalOpen}
+                style={{display: isModalOpen ? "none" : "block"}}
+            />
+          </div>
+        </div>
+
+        <div className="mb-5 ">
+          <input
+              type="submit"
+              value="Generate your new resume"
+              style={{ backgroundColor: 'green', color: 'white' }}  
+              className="w-full cursor-pointer rounded-lg border border-primary bg-black p-4 text-white  font-medium transition hover:bg-opacity-90"
+              onClick={handleSubmit}
+
+          />
+         
         </div>
       </div>
-    </form>
+    </div>
+  </div>
+
+</div>
+  )
+}
+{!loading  && fileContents &&
+       <div style={{ textAlign: 'center', marginTop: '20px' }}>
+         <PdfViewer pdfData={tmpResume} />
+        </div>
+  }
+</div>
   );
 };
 
