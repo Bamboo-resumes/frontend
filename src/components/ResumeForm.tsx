@@ -7,7 +7,7 @@ import BambooLogo from '/bamboologo.jpg';
 import BambooSolo from '/bamboo_solo.jpg';
 import TaskList from './Tasks/TaskList';
 import ComponentLoader from "../common/Loader/ComponentLoader";
-import PdfViewer from './PdfViewer'; 
+import PdfViewer from './PDFViewer'; 
 
 export interface WorkExperience {
   job_title: string;
