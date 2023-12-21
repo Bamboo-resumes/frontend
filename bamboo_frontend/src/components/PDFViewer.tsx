@@ -7,6 +7,7 @@ const PdfViewer = ({ pdfData }) => (
     {console.log(pdfData)}
     <a href={pdfData} download="your-pdf-file.pdf">
      
+     
         </a>
   </div>
 );
