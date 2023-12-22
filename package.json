@@ -8,8 +8,7 @@
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "serve dist",
-    "serve-heroku": "vite --host 0.0.0.0 --port $PORT preview"
+    "start": "serve dist"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
