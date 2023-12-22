@@ -10,6 +10,7 @@ import ComponentLoader from "../common/Loader/ComponentLoader";
 import PdfViewer from './PDFViewer'; 
 
 export interface WorkExperience {
+  
   job_title: string;
   company_name: string;
   responsibilities: string;
