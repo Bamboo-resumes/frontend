@@ -14,9 +14,7 @@ function App() {
 
   return (
     <div style={{  
-      backgroundImage: `url('${"background.png"}')`,
-      backgroundPosition: 'center',
-      backgroundSize: 'cover',
+      backgroundColor: 'white',
      
     }}>
        <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`}>

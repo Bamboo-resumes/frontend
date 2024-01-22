@@ -1,6 +1,7 @@
 
 import Header from '../components/Header';
 import { Outlet } from 'react-router-dom';
+import Footer from '../components/footer';
 
 const DefaultLayout = () => {
 
@@ -15,12 +16,13 @@ const DefaultLayout = () => {
           {/* <!-- ===== Header End ===== --> */}
 
           {/* <!-- ===== Main Content Start ===== --> */}
-          <main>
-            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+          <main >
+            {/* <div className=" w-full p-4 md:p-6 2xl:p-10 " > */}
               <Outlet />
-            </div>
+            {/* </div> */}
           </main>
           {/* <!-- ===== Main Content End ===== --> */}
+          <Footer/>
         </div>
         {/* <!-- ===== Content Area End ===== --> */}
       </div>
