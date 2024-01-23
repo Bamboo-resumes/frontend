@@ -194,7 +194,7 @@ useEffect(() => {
 }
 
   async function handleresumeSubmit(){
-    const API_ENDPOINT: string = "http://127.0.0.1:8000/upload";
+    const API_ENDPOINT: string = "https://bamboo-backend-apeg6iz56q-uk.a.run.app/upload";
 
   try {
     // You can use the formData object to generate a resume or send the data to an API.
