@@ -17,7 +17,7 @@ function MainRouter() {
                         <Route
                         path={path}
                         element={
-                            <Suspense fallback={<Loader />}>
+                            <Suspense fallback={<Loader is_uploading={false} />}>
                             <Component />
                             </Suspense>
                         }

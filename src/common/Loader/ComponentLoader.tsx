@@ -1,12 +1,15 @@
 import React from 'react';
 import { PropagateLoader } from 'react-spinners'; // Import the spinner of your choice
-
-const ComponentLoader = () => {
+import './ComponentLoader.css';
+interface ComponentLoaderProps {
+    is_uploading: boolean;
+}
+const ComponentLoader = (props: ComponentLoaderProps) => {
     return (
-        <div className="loading">
-            <PropagateLoader color={'#36D7B7'} size={15} /> {/* Customize the color and size */}
-
-        </div>
+        <div className="loading-spinner-container">
+        <div className="loading-spinner"></div>
+        {props.is_uploading && <p>Generating your resume...</p>}
+      </div>
     );
 };
 

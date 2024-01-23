@@ -215,8 +215,8 @@ useEffect(() => {
     setLoading(true);
     await axios.post(API_ENDPOINT, formData, config)
       .then((response) => {
-        setFileContents(response.data);
-        //handleOpenPdf(response.data);
+        //setFileContents(response.data);
+        handleOpenPdf(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -234,7 +234,7 @@ useEffect(() => {
   }
 
   async function handleformSubmit() {
-    const API_ENDPOINT: string = "https://bamboo-django-a637ab9dea2b.herokuapp.com/";
+    const API_ENDPOINT: string = "https://bamboo-backend-apeg6iz56q-uk.a.run.app/";
 
   try {
     // You can use the formData object to generate a resume or send the data to an API.
@@ -277,13 +277,16 @@ useEffect(() => {
     setFileContents(blobUrl);
 
     // Open the PDF in a new tab
-    // window.open(blobUrl, '_blank');
+    window.open(blobUrl, '_blank');
   };
 
   return (
     
   <div className="rounded-sm min-h-screen border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark " style={{margin: 'auto', width:"40%", justifyContent:"center"}} ref={scrollToRef}>
-  { loading ? <ComponentLoader /> :
+  { loading ? <div className='flex' style={{alignItems:"center", margin:"auto", justifyContent:"center"}}>
+  <ComponentLoader is_uploading={true} />
+</div>
+ :
   (!tmpResume &&
     <div className="items-center" >
   {/* Right side */}
@@ -300,7 +303,7 @@ useEffect(() => {
       <div>
      {tabs == 1 &&
      <div>
-      {!fileContents && <div>
+      <div>
       <div class="border-b border-gray-900/10 pb-12 h-[50vh]" >
        
       <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 h-full ">
@@ -343,7 +346,7 @@ useEffect(() => {
         </button>
       </div>
 )}
-    </div> }
+    </div> 
 </div>
     }
     {tabs == 2 &&
@@ -579,7 +582,7 @@ useEffect(() => {
           </div> */}
       </div>
     }
-    {!fileContents && <div>
+   <div>
      <div className="mb-4 text-left">
             <label className="mb-2.5 block font-medium text-black dark:text-white">
               Job description
@@ -614,7 +617,7 @@ useEffect(() => {
           />
          
         </div>
-         </div> }
+         </div> 
          
       </div>
     </div>
@@ -623,16 +626,8 @@ useEffect(() => {
 </div>
   )
 }
-{!loading  && fileContents &&
-    <div className="flex  justify-center">
-      <iframe
-        src={fileContents}
-        width="100%"
-        height="500px"
-      />
-      <p>Thank you so much for playing my game</p>
-
-         </div> 
+{fileContents &&
+      <PdfViewer pdfData={fileContents} />
   }
 </div>
   );
