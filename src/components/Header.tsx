@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import DarkModeSwitcher from './DarkModeSwitcher';
 import bamboosolo from '/bamboo_solo.png';
-
+import BambooLogo from '/bamboo_logo.png';
 const Header = () => {
   
 
@@ -29,11 +29,11 @@ const Header = () => {
   <div class="antialiased dark-mode:bg-gray-900" style={{backgroundColor: "#EEEEEE"}}>
   <div class="w-full text-gray-700  dark-mode:text-gray-200 dark-mode:bg-gray-800">
     <div x-data="{ open: true }" class="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
-      <div class="flex flex-row items-center justify-between p-4">
+      <div class="flex flex-row items-center justify-between">
         <div className='flex' style={{alignItems: 'center'}}>
-          <img src={bamboosolo} width="32" height="32" alt="Logo" />
+          
         <a href="#" class="text-lg font-semibold tracking-widest text-gray-900 uppercase rounded-lg dark-mode:text-white focus:outline-none focus:shadow-outline">
-          Bamboo Resumes</a>
+        <img src={BambooLogo} height={'200'} width={'200'} alt="Logo" /></a>
         </div>
        
         <button class="rounded-lg md:hidden focus:outline-none focus:shadow-outline" >
