@@ -10,7 +10,7 @@ import ComponentLoader from "../common/Loader/ComponentLoader";
 import PdfViewer from './PDFViewer'; 
 import { GrDocumentPdf } from "react-icons/gr";
 import { saveAs } from 'file-saver';
-
+import TaskModal from './TaskModal/TaskModal';
 export interface WorkExperience {
   
   job_title: string;
@@ -57,15 +57,12 @@ const ResumeForm: React.FC = (props: ResumeFormProps) => {
   const [loading ,setLoading] = useState<boolean>(false);
   const [currentSkillsInput, setCurrentSkillsInput] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isExperience, setIsExperience] = React.useState<boolean>(false);
+  const [isExperienceModalOpen, setIsExperienceModalOpen] = useState<boolean>(false);
   const [tmpResume, setTmpResume] = useState<any>(null);
   const [fileContents, setFileContents] = useState(null);
   const [tabs, setTabs] = useState(1);
   const [uploadedResume, setUploadedResume] = useState(null);
   const [uploadResumeJobDescription, setUploadResumeJobDescription] = useState('');
-useEffect(() => {
-  console.log(uploadedResume);
-},[uploadedResume])
 
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,16 +274,32 @@ useEffect(() => {
     setFileContents(blobUrl);
 
     // Open the PDF in a new tab
-    window.open(blobUrl, '_blank');
+   // window.open(blobUrl, '_blank');
   };
+
+  function handleClearForm() {
+    setFileContents(null);
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      skills: [] as string[],
+      education: [],
+      experience: [],
+      url: '',
+      job_description: ''
+    });
+    setUploadedResume(null);
+    setUploadResumeJobDescription('');
+  }
 
   return (
     
   <div className="rounded-sm min-h-screen border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark " style={{margin: 'auto', width:"40%", justifyContent:"center"}} ref={scrollToRef}>
-  { loading ? <div className='flex' style={{alignItems:"center", margin:"auto", justifyContent:"center"}}>
+  { loading && !fileContents ? <div className='flex' style={{alignItems:"center", margin:"auto", justifyContent:"center"}}>
   <ComponentLoader is_uploading={true} />
 </div>
- :
+ : !loading && !fileContents ?
   (!tmpResume &&
     <div className="items-center" >
   {/* Right side */}
@@ -360,7 +373,7 @@ useEffect(() => {
             <input
                 type="text"
                 placeholder="Enter your name"
-                className="rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="rounded-lg text-black border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                 name="name" 
                 style={{width: "80%"}}
                 value={formData && formData.name}
@@ -385,7 +398,7 @@ useEffect(() => {
             <input
                 type="email"
                 placeholder="Enter your email"
-                className=" rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className=" rounded-lg text-black border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                 name="email"
                 style={{width: "80%"}} 
                 value={formData && formData.email}
@@ -409,7 +422,7 @@ useEffect(() => {
             <input
                 type="phone"
                 placeholder="Enter your number"
-                className="rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="rounded-lg border text-black border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                 name="phone" 
                 style={{width: "80%"}}
                 value={formData && formData.phone}
@@ -434,7 +447,7 @@ useEffect(() => {
                       <input
                             type="text"
                             placeholder="Enter your skills"
-                            className=" rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                            className=" rounded-lg  text-black border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             name="skills" 
                             style={{width: "80%"}}
                             value={currentSkillsInput}
@@ -474,12 +487,41 @@ useEffect(() => {
         </div>
         <div className="mb-4 text-left">
           <label className="mb-2.5 block font-medium text-black dark:text-white">
-            Education/Experience
+            Education
           </label>
           <div className="relative ">
-            <TaskList isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} education={formData && formData.education} experience={formData && formData.experience} onTaskChange={handleSectionChange}  isExperience={isExperience} setIsExperience={setIsExperience}/>
+            <button
+             className='text-white'
+             onClick={() => setIsModalOpen(true)}
+             style={{ backgroundColor: 'green'}}  
+            >
+              Add Education
+            </button>
+          {/* <button
+            onClick={setIsModalOpen(true)}
+            style={{ backgroundColor: 'green'}}  
+            className="flex items-center gap-2 rounded bg-primary py-2 px-4.5 font-medium text-white hover:bg-opacity-80 z-0 "
+          >
+            <svg
+              className="fill-current"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 7H9V1C9 0.4 8.6 0 8 0C7.4 0 7 0.4 7 1V7H1C0.4 7 0 7.4 0 8C0 8.6 0.4 9 1 9H7V15C7 15.6 7.4 16 8 16C8.6 16 9 15.6 9 15V9H15C15.6 9 16 8.6 16 8C16 7.4 15.6 7 15 7Z"
+                fill=""
+              />
+            </svg>
+            <span>Add Education</span>
+          </button> */}
+           {isModalOpen && <TaskModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} education={formData && formData.education}  onTaskChange={handleSectionChange}  isExperience={false} />}
+            {/* <TaskList isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} education={formData && formData.education}  onTaskChange={handleSectionChange}  isExperience={false} /> */}
           </div>
         </div>
+        
         { formData.education && formData.education.map((task: any) => {
 
           return (
@@ -489,7 +531,7 @@ useEffect(() => {
               style={{display: isModalOpen ? 'none': 'block', marginBottom: '0.5rem'}}
             >
               <div className="relative flex items-center justify-between">
-                {task.job_title ? <p>{task.job_title}</p> : <p>{task.school_name}</p>}
+                {task.job_title ? <p className='text-black'>{task.job_title}</p> : <p className='text-black'>{task.school_name}</p>}
                 {/* <button
                   className="text-primary text-sm font-medium"
                   onClick={() => {
@@ -507,6 +549,42 @@ useEffect(() => {
               </div>
           );
           })}
+        <div className="mb-4 text-left">
+          <label className="mb-2.5 block font-medium text-black dark:text-white">
+            Experience
+          </label>
+          <div className="relative ">
+            <button
+              className='text-white'
+              onClick={() => setIsExperienceModalOpen(true)}
+              style={{ backgroundColor: 'green', }}
+            >
+              Add Experience
+            </button>
+          {/* <button
+            onClick={setIsExperienceModalOpen(true)}
+            style={{ backgroundColor: 'green'}}  
+            className="flex items-center gap-2 rounded bg-primary py-2 px-4.5 font-medium text-white hover:bg-opacity-80 z-0 "
+          >
+            <svg
+              className="fill-current"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 7H9V1C9 0.4 8.6 0 8 0C7.4 0 7 0.4 7 1V7H1C0.4 7 0 7.4 0 8C0 8.6 0.4 9 1 9H7V15C7 15.6 7.4 16 8 16C8.6 16 9 15.6 9 15V9H15C15.6 9 16 8.6 16 8C16 7.4 15.6 7 15 7Z"
+                fill=""
+              />
+            </svg>
+            <span>Add Experience</span>
+          </button> */}
+           { isExperienceModalOpen && <TaskModal isModalOpen={isExperienceModalOpen} setIsModalOpen={setIsExperienceModalOpen} experience={formData && formData.experience}  onTaskChange={handleSectionChange}  isExperience={true}/>}
+            {/* <TaskList isModalOpen={isExperienceModalOpen} setIsModalOpen={setIsExperienceModalOpen}  experience={formData && formData.experience} onTaskChange={handleSectionChange}  isExperience={true} /> */}
+          </div>
+        </div>
 
           { formData.experience && formData.experience.map((task: any) => {
             return (
@@ -516,7 +594,7 @@ useEffect(() => {
                 style={{display: isModalOpen ? 'none': 'block', marginBottom: '0.5rem'}}
               >
                 <div className="relative flex items-center justify-between">
-                {task.job_title ? <p>{task.job_title}</p> : <p>{task.school_name}</p>}
+                {task.job_title ? <p className='text-black'>{task.job_title}</p> : <p className='text-black'>{task.school_name}</p>}
                   {/* <button
                     className="text-primary text-sm font-medium"
                     onClick={() => {
@@ -534,7 +612,7 @@ useEffect(() => {
                 </div>
             );
             })} 
-            <div className="mb-4 text-left">
+            {/* <div className="mb-4 text-left">
             <label className="mb-2.5 block font-medium text-black dark:text-white">
               URL
             </label>
@@ -556,7 +634,7 @@ useEffect(() => {
                   }}
               />
             </div>
-          </div>
+          </div> */}
           {/* <div className="mb-4 text-left">
             <label className="mb-2.5 block font-medium text-black dark:text-white">
               Job description
@@ -588,12 +666,12 @@ useEffect(() => {
               Job description
             </label>
             <div className="relative">
-              <input
-                  type="text"
+              <textarea
+                  
                   placeholder="Enter your job description"
-                  className=" rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  className="z-0 rounded-lg text-black border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                   name="job_description"
-                  style={{width: "80%", display: isModalOpen ? "none" : "block"}} 
+                  style={{width: "100%", display: isModalOpen ? "none" : "block", resize:"none"}} 
                   value={tabs==2? formData && formData.job_description : uploadResumeJobDescription}
                   onChange={tabs==2 ? handleChange : (e) => setUploadResumeJobDescription(e.target.value)}
                   required={true}
@@ -625,10 +703,10 @@ useEffect(() => {
 
 </div>
   )
-}
-{fileContents &&
-      <PdfViewer pdfData={fileContents} />
-  }
+:  <div className='flex-col'>
+    <ResumeView viewResume={fileContents} />
+    <button type="button" onClick={handleClearForm} class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Another Resume</button>
+  </div>}
 </div>
   );
 };

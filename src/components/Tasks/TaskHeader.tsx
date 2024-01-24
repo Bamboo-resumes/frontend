@@ -5,19 +5,23 @@ import TaskPopup from './TaskPopup';
 interface TaskHeaderProps {
     isExperience: boolean;
     onTaskChange: (tasks: any,type: string) => void;
-    setIsExperience: (isExperience: boolean) => void;
+    
     isModalOpen: boolean;
     setIsModalOpen: (isModalOpen: boolean) => void;
-    }
+
+}
 
 const TaskHeader = (props: TaskHeaderProps) => {
   const [currentTask, setCurrentTask] = useState<any>(null);
   const trigger = useRef<any>(null);
   const popup = useRef<any>(null);
 
+  useEffect(() => {
+    console.log(isExperience);
+  },[]);
+
   const isExperience = props.isExperience;
   const onTaskChange = props.onTaskChange;
-  const setIsExperience = props.setIsExperience;
 
   // close on click outside
 //   useEffect(() => {
@@ -51,14 +55,14 @@ const TaskHeader = (props: TaskHeaderProps) => {
   }
 
   return (
-    <div className="flex flex-col  gap-y-4 rounded-sm border border-stroke  p-3 shadow-default dark:border-strokedark dark:bg-boxdark sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col z-99999  gap-y-4 rounded-sm border border-stroke  p-3 shadow-default dark:border-strokedark dark:bg-boxdark sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-col gap-4 2xsm:flex-row 2xsm:items-center">
         <div>
           <button
             ref={trigger}
             onClick={handlePopup}
             style={{ backgroundColor: 'green'}}  
-            className="flex items-center gap-2 rounded bg-primary py-2 px-4.5 font-medium text-white hover:bg-opacity-80  "
+            className="flex items-center gap-2 rounded bg-primary py-2 px-4.5 font-medium text-white hover:bg-opacity-80 z-0 "
           >
             <svg
               className="fill-current"
@@ -82,7 +86,7 @@ const TaskHeader = (props: TaskHeaderProps) => {
             setPopupOpen={props.setIsModalOpen}
             isExperience={isExperience}
             onTaskChange={onTaskChange}
-            setIsExperience={setIsExperience}
+           
           />
           {/* <!-- ===== Task Popup End ===== --> */}
         </div>

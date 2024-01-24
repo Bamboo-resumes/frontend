@@ -4,13 +4,12 @@ import Drag from '../../js/drag';
 import { isModifier } from 'typescript';
 
 interface TaskListProps {
-  experience: any;
-  education: any;
+  experience?: any;
+  education?: any;
   onTaskChange: (tasks: any, type: string) => void;
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
   isExperience: boolean;
-  setIsExperience: (isExperience: boolean) => void;
 }
 
 const TaskList: React.FC = (props: TaskListProps) => {
@@ -21,21 +20,19 @@ const TaskList: React.FC = (props: TaskListProps) => {
 
   const onTaskChange = props.onTaskChange;
   const isExperience = props.isExperience;
-  const setIsExperience = props.setIsExperience;
 
-  useEffect(() => {
-    console.log(props.experience);
-    console.log(props.education);
-  },[props.experience, props.education])
+
 
   return (
     <>
-      <div className="mx-auto max-w-5xl "
+      <div className="mx-auto max-w-5xl z-99999 "
         style={{overflow: 'hidden'}}
       >
 
         {/* <!-- Task Header Start --> */}
-        <TaskHeader isModalOpen={props.isModalOpen} setIsModalOpen={props.setIsModalOpen} isExperience={isExperience} setIsExperience={setIsExperience} onTaskChange={onTaskChange} />
+        {!isExperience && <TaskHeader isModalOpen={props.isModalOpen} setIsModalOpen={props.setIsModalOpen} isExperience={false}onTaskChange={onTaskChange} />}
+        {isExperience && <TaskHeader isModalOpen={props.isModalOpen} setIsModalOpen={props.setIsModalOpen} isExperience={true} onTaskChange={onTaskChange} />}
+        {/* <TaskHeader isModalOpen={props.isModalOpen} setIsModalOpen={props.setIsModalOpen} isExperience={isExperience} setIsExperience={setIsExperience} onTaskChange={onTaskChange} /> */}
         {/* <!-- Task Header End --> */}
         {/* <!-- Task List Wrapper End --> */}
       </div>

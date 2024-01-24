@@ -5,13 +5,12 @@ interface TaskPopupProps {
   setPopupOpen: (open: boolean) => void;
   isExperience: boolean;
   onTaskChange: (task: any, type: string) => void;
-  setIsExperience: (isExperience: boolean) => void;
 }
 
 const TaskPopup: React.FC<TaskPopupProps> = (props) => {
 
   const isExperience = props.isExperience;
-  const [isChecked, setIsChecked] = useState(false);
+
 
   const [currentExperienceForm, setCurrentExperienceForm] = useState<any>({
     job_title: '',
@@ -65,23 +64,18 @@ const TaskPopup: React.FC<TaskPopupProps> = (props) => {
     props.setPopupOpen(false)
   }
 
-  const handleToggle = (e) => {
-    props.setIsExperience(!props.isExperience);
-    setIsChecked(!isChecked);
-  }
+
 
   return (
     <dialog
-      className={`fixed top-0 left-0 z-99999 flex h-screen w-full justify-center overflow-y-scroll bg-black/80 py-5 px-4 ${
-        props.popupOpen === true ? 'block' : 'hidden'
-      }`}
+      className={`fixed top-0 left-0 z-99999 flex h-screen w-full justify-center overflow-y-scroll bg-black/80 py-5 px-4 ${props.popupOpen === true ? 'block' : 'hidden'}`}
     >
       <div  className="relative m-auto w-full max-w-180 rounded-sm border border-stroke bg-white p-4 shadow-default dark:border-strokedark dark:bg-meta-4 sm:p-8 xl:p-10">
       <div className="flex justify-end mb-4">
 
-      <button onClick={handleToggle} className={`toggle-switch ${isChecked ? 'checked' : ''}`}>
+      {/* <button onClick={handleToggle} className={`toggle-switch ${isChecked ? 'checked' : ''}`}>
         <span className="slider round"></span>
-      </button>
+      </button> */}
       <button
         onClick={() => props.setPopupOpen(false)}
         className="ml-4"
@@ -126,7 +120,7 @@ const TaskPopup: React.FC<TaskPopupProps> = (props) => {
               name={isExperience ? "job_title" : "school_name"}
               value={isExperience ? currentExperienceForm.job_title : currentEducationForm.school_name}
               onChange={isExperience ? handleExperienceChange : handleEducationChange}
-              required={true}
+            
             />
           </div>
           <div className="mb-5">

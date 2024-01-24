@@ -7,7 +7,7 @@ interface ResumeViewProps {
 function ResumeView(props: ResumeViewProps){
     const viewResume = props.viewResume;
     return(
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <div style={{ textAlign: 'center', marginTop: '20px', height:"100%" }}>
             <object
           data={viewResume}
           type="application/pdf"
