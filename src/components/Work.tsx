@@ -1,6 +1,7 @@
 import Header from './Header';
 import code_editor_illustration from '/coderpad-code-editor-with-playback-illustration.png';
 import custom_screen from '/coderpad-screen-create-technical-tests-quickly-even-if-youre-not-techy.png';
+import comparison from '/coderpad-screen-spot-high-performing-candidates-to-move-to-the-next-round-of-interviews.png';
 
 const Work = () => {
     return (
@@ -44,6 +45,25 @@ const Work = () => {
                         <img
                             src={custom_screen}
                             alt="custom-screening-tests"
+                            style={{ maxWidth: '50%', maxHeight: '50%' }}
+                        />
+                    </div>
+                </section>
+
+                <section className="bg-white m-4 p-6">
+                    <div className="text-black text-center items-center justify-center ">
+                        <h2 className="font-extrabold tracking-tight text-black text-3xl m-4">
+                            See how candidates stack up against each other
+                        </h2>
+                        <p>
+                            We offer data-driven insights to help you pinpoint the most skilled candidates. <br />
+                        </p>
+                        
+                    </div>
+                    <div className="flex justify-center items-center my-4">
+                        <img
+                            src={comparison}
+                            alt="comparison-candidates"
                             style={{ maxWidth: '50%', maxHeight: '50%' }}
                         />
                     </div>
