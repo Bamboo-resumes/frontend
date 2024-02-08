@@ -3,6 +3,7 @@ import { lazy } from 'react';
 const Home = lazy(() => import('../components/Home'));
 const About = lazy(() => import('../components/About'));
 const Contact = lazy(() => import('../components/Contact'));
+const Work = lazy(() => import('../components/Work'));
 const coreRoutes = [
   {
     path: '/',
@@ -19,6 +20,11 @@ const coreRoutes = [
     title: 'Contact',
     component: Contact,
   },
+  {
+    path: '/work',
+    title: 'Work',
+    component: Work,
+  }
 
 ];
 
