@@ -10,26 +10,22 @@ import Loader from "../common/Loader/ComponentLoader";
 function MainRouter() {
     return (
         <div>
-          
-                <Routes>
-                    <Route element={<DefaultLayout />}>
-                    {routes.map(({ path, component: Component }) => (
-                        <Route
-                        path={path}
-                        element={
-                            <Suspense fallback={<Loader is_uploading={false} />}>
-                            <Component />
-                            </Suspense>
-                        }
-                        />
-                    ))}
+        
+        <Routes>
+            {routes.map(({ path, component: Component }) => (
+                <Route key={path} path={path} element={<DefaultLayout />}>
+                <Route
+                    index={path === '/'}
+                    element={
+                    <Suspense fallback={<Loader is_uploading={false} />}>
+                        <Component />
+                    </Suspense>
+                    }
+                />
                 </Route>
-                </Routes>
-                
-
-            
-        </div>
-          
+            ))}
+        </Routes>
+        </div>      
     )
 }
 
