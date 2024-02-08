@@ -7,7 +7,7 @@ import DefaultLayout from "../layout/DefaultLayout";
 import routes from "./routes";
 import Loader from "../common/Loader/ComponentLoader";
 
-function MainRouter() {
+function    MainRouter() {
     return (
         <div>
         
